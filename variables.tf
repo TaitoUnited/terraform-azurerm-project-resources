@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 Taito United
+ * Copyright 2020 Taito United
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,86 @@
  * limitations under the License.
  */
 
+# Create flags
+
+# variable "create_domain" {
+#   type        = bool
+#   default     = false
+#   description = "If true, a DNS setup is created for each main domain."
+# }
+#
+# variable "create_domain_certificate" {
+#   type        = bool
+#   default     = false
+#   description = "If true, a domain certificate is created for each domain."
+# }
+
+variable "create_storage_buckets" {
+  type        = bool
+  default     = false
+  description = "If true, storage buckets are created."
+}
+
+variable "create_databases" {
+  type        = bool
+  default     = false
+  description = "If true, databases are created. (TODO)"
+}
+
+variable "create_in_memory_databases" {
+  type        = bool
+  default     = false
+  description = "If true, in-memory databases are created. (TODO)"
+}
+
+variable "create_topics" {
+  type        = bool
+  default     = false
+  description = "If true, topics are created."
+}
+
+variable "create_gateway" {
+  type        = bool
+  default     = false
+  description = "If true, API Gateway is created. (TODO)"
+}
+
+variable "create_containers" {
+  type        = bool
+  default     = false
+  description = "If true, containers are created. (TODO)"
+}
+
+variable "create_functions" {
+  type        = bool
+  default     = false
+  description = "If true, functions are created. (TODO)"
+}
+
+variable "create_function_permissions" {
+  type        = bool
+  default     = false
+  description = "If true, function permissions are created. (TODO)"
+}
+
+variable "create_service_accounts" {
+  type        = bool
+  default     = false
+  description = "If true, service accounts are created. (TODO)"
+}
+
+variable "create_uptime_checks" {
+  type        = bool
+  default     = false
+  description = "If true, uptime check and alert is created for each service with uptime path set."
+}
+
+# variable "create_container_image_repositories" {
+#   type        = bool
+#   default     = false
+#   description = "If true, container image repositories are created."
+# }
+
 # Labeling
 
 variable "resource_group" {
@@ -21,22 +101,29 @@ variable "resource_group" {
   description = "Azure resource group where the resources are created."
 }
 
-# Project
-
 variable "project" {
   type        = string
   description = "Project name: e.g. \"my-project\""
 }
+
+# Environment info
 
 variable "env" {
   type        = string
   description = "Environment: e.g. \"dev\""
 }
 
-# Storage
+# Uptime settings
 
-variable "storages" {
-  type    = list(string)
+variable "uptime_channels" {
+  type = list(string)
   default = []
-  description = "Name of each storage bucket."
+  description = "SNS topics used to send alert notifications (e.g. \"arn:aws:sns:us-east-1:0123456789:my-zone-uptimez\")"
+}
+
+# Additional variables as a json/yaml
+
+variable "variables" {
+  type    = any
+  description = "Ingress and services as json/yaml. See README.md for format."
 }

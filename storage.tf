@@ -1,5 +1,5 @@
 /**
- * Copyright 2019 Taito United
+ * Copyright 2020 Taito United
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 
 resource "azurerm_storage_account" "project" {
-  count                    = length(var.storages) > 0 ? 1 : 0
+  count                    = length(local.bucketsById) > 0 ? 1 : 0
 
   name                     = replace("${var.project}-${var.env}", "-", "")
   resource_group_name      = data.azurerm_resource_group.namespace.name
@@ -35,10 +35,18 @@ resource "azurerm_storage_account" "project" {
 }
 
 resource "azurerm_storage_container" "bucket" {
-  count                 = length(var.storages)
-  name                  = var.storages[count.index]
+  count                 = length(local.bucketsById)
+  name                  = values(local.bucketsById)[count.index].name
   storage_account_name  = azurerm_storage_account.project[0].name
   container_access_type = "private"
+
+  cors_rule {
+    allowed_origins = [
+      for cors in values(local.bucketsById)[count.index].cors:
+      cors.domain
+    ]
+    allowed_methods = ["GET"]
+  }
 
   lifecycle {
     prevent_destroy = true
