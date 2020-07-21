@@ -19,7 +19,11 @@ provider "azurerm" {
 
 locals {
 
-  serviceAccounts = var.create_service_accounts ? try(var.variables.serviceAccounts, []) : []
+  serviceAccounts = (
+    var.create_service_accounts && try(var.variables.serviceAccounts, null) != null
+    ? try(var.variables.serviceAccounts, [])
+    : []
+  )
 
   ingress = try(var.variables.ingress, { enabled: false })
 
@@ -36,8 +40,14 @@ locals {
     )
   ]
 
+  services = (
+    try(var.variables.services, null) != null
+    ? try(var.variables.services, {})
+    : {}
+  )
+
   servicesById = {
-    for id, service in var.variables.services:
+    for id, service in local.services:
     id => merge(service, { id: id })
   }
 
@@ -90,7 +100,7 @@ locals {
     if var.create_storage_buckets && service.type == "bucket"
   }
 
-  gatewayFunctions = {
+  gatewayFunctionsById = {
     for name, service in local.servicesById:
     name => service
     if var.create_gateway && local.ingress.enabled && service.type == "function" && try(service.path, "") != ""
@@ -115,7 +125,7 @@ locals {
   }
 
   gatewayEnabled = length(concat(
-    values(local.gatewayFunctions),
+    values(local.gatewayFunctionsById),
     values(local.gatewayStaticContentsById),
   )) > 0
 
