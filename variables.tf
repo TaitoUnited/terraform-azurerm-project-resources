@@ -52,7 +52,7 @@ variable "create_topics" {
   description = "If true, topics are created."
 }
 
-variable "create_gateway" {
+variable "create_ingress" {
   type        = bool
   default     = false
   description = "If true, API Gateway is created. (TODO)"
@@ -121,9 +121,9 @@ variable "uptime_channels" {
   description = "SNS topics used to send alert notifications (e.g. \"arn:aws:sns:us-east-1:0123456789:my-zone-uptimez\")"
 }
 
-# Additional variables as a json/yaml
+# Resources as a json/yaml
 
-variable "variables" {
-  type    = any
-  description = "Ingress and services as json/yaml. See README.md for format."
+variable "resources" {
+  type        = any
+  description = "Resources as JSON (see README.md). You can read values from a YAML file with yamldecode()."
 }
