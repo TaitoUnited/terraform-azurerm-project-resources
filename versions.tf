@@ -1,5 +1,5 @@
 /**
- * Copyright 2020 Taito United
+ * Copyright 2021 Taito United
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,11 @@
  */
 
 terraform {
-  required_version = ">= 0.13"
   required_providers {
     azurerm = {
-      source = "hashicorp/azurerm"
+      source  = "hashicorp/azurerm"
+      version = "=2.51.0"
     }
   }
+  required_version = ">= 0.14"
 }
