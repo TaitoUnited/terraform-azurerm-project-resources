@@ -21,14 +21,14 @@ provider "azurerm" {
 locals {
 
   serviceAccounts = (
-    var.create_service_accounts && try(var.resources.serviceAccounts, null) != null
-    ? try(var.resources.serviceAccounts, [])
+    var.create_service_accounts && coalesce(var.resources.serviceAccounts, null) != null
+    ? coalesce(var.resources.serviceAccounts, [])
     : []
   )
 
-  ingress = try(var.resources.ingress, { enabled: false })
+  ingress = defaults(var.resources.ingress, { enabled: false })
 
-  domains = try(var.resources.ingress.domains, [])
+  domains = coalesce(var.resources.ingress.domains, [])
 
   mainDomains = [
     for domain in local.domains:
@@ -42,8 +42,8 @@ locals {
   ]
 
   services = (
-    try(var.resources.services, null) != null
-    ? try(var.resources.services, {})
+    coalesce(var.resources.services, null) != null
+    ? coalesce(var.resources.services, {})
     : {}
   )
 
@@ -52,11 +52,11 @@ locals {
     id => merge(service, { id: id })
   }
 
-  uptimeEnabled = try(var.resources.uptimeEnabled, true)
+  uptimeEnabled = coalesce(var.resources.uptimeEnabled, true)
   uptimeTargetsById = {
     for name, service in local.servicesById:
     name => service
-    if var.create_uptime_checks && local.uptimeEnabled && try(service.uptimePath, null) != null
+    if var.create_uptime_checks && local.uptimeEnabled && coalesce(service.uptimePath, null) != null
   }
 
   containersById = {
@@ -104,7 +104,7 @@ locals {
   gatewayFunctionsById = {
     for name, service in local.servicesById:
     name => service
-    if var.create_ingress && local.ingress.enabled && service.type == "function" && try(service.path, "") != ""
+    if var.create_ingress && local.ingress.enabled && service.type == "function" && coalesce(service.path, "") != ""
   }
 
   gatewayStaticContentsById = {
@@ -116,13 +116,13 @@ locals {
   gatewayRootStaticContentsById = {
     for name, service in local.gatewayStaticContentsById:
     name => service
-    if var.create_ingress && local.ingress.enabled && service.path != null && try(service.path, "") == "/"
+    if var.create_ingress && local.ingress.enabled && service.path != null && coalesce(service.path, "") == "/"
   }
 
   gatewayChildStaticContentsById = {
     for name, service in local.gatewayStaticContentsById:
     name => service
-    if var.create_ingress && local.ingress.enabled && service.path != null && try(service.path, "") != "/"
+    if var.create_ingress && local.ingress.enabled && service.path != null && coalesce(service.path, "") != "/"
   }
 
   gatewayEnabled = length(concat(
