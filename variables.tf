@@ -85,6 +85,12 @@ variable "create_function_permissions" {
   description = "If true, function permissions are created. (TODO)"
 }
 
+variable "create_cicd_service_account" {
+  type        = bool
+  default     = false
+  description = "If true, CI/CD service account is created."
+}
+
 variable "create_service_accounts" {
   type        = bool
   default     = false
@@ -131,6 +137,11 @@ variable "create_log_alert_policies" {
 
 # Project
 
+variable "subscription_id" {
+  type        = string
+  description = "Azure subscription ID."
+}
+
 variable "resource_group" {
   type        = string
   description = "Azure resource group where the resources are created."
@@ -144,6 +155,12 @@ variable "project" {
 variable "env" {
   type        = string
   description = "Environment: e.g. \"dev\""
+}
+
+variable "kubernetes_name" {
+  type        = string
+  description = "Name of the Kubernetes cluster"
+  default     = ""
 }
 
 # Uptime settings
@@ -194,6 +211,7 @@ variable "resources" {
 
     services = map(object({
       type = string
+      purpose = optional(string)
       machineType = optional(string)
       name = optional(string)
       location = optional(string)
@@ -201,7 +219,8 @@ variable "resources" {
       corsRules = optional(list(object({
         allowedOrigins = list(string)
         allowedMethods = optional(list(string))
-        exposeHeaders = optional(list(string))
+        allowedHeaders = optional(list(string))
+        exposedHeaders = optional(list(string))
         maxAgeSeconds = optional(number)
       })))
       versioningEnabled = optional(bool)
@@ -245,6 +264,7 @@ variable "resources" {
       accountReplicationType = optional(string)  # LRS, GRS, RAGRS, ZRS, GZRS, RAGZRS
       enableHttpsTrafficOnly = optional(bool)
       minTlsVersion = optional(string)           # TLS1_0, TLS1_1, TLS1_2
+      allowBlobPublicAccess = optional(bool)
       isHnsEnabled = optional(bool)
       largeFileShareEnabled = optional(bool)
       networkRules = optional(object({

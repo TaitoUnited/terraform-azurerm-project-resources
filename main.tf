@@ -21,7 +21,7 @@ provider "azurerm" {
 locals {
 
   serviceAccounts = (
-    var.create_service_accounts && coalesce(var.resources.serviceAccounts, null) != null
+    var.create_service_accounts
     ? coalesce(var.resources.serviceAccounts, [])
     : []
   )
@@ -41,11 +41,7 @@ locals {
     )
   ]
 
-  services = (
-    coalesce(var.resources.services, null) != null
-    ? coalesce(var.resources.services, {})
-    : {}
-  )
+  services = coalesce(var.resources.services, {})
 
   servicesById = {
     for id, service in local.services:
@@ -56,7 +52,7 @@ locals {
   uptimeTargetsById = {
     for name, service in local.servicesById:
     name => service
-    if var.create_uptime_checks && local.uptimeEnabled && coalesce(service.uptimePath, null) != null
+    if var.create_uptime_checks && local.uptimeEnabled && service.uptimePath != null
   }
 
   containersById = {

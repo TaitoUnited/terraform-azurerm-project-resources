@@ -15,7 +15,7 @@
  */
 
 data "azurerm_application_insights" "zone" {
-  name                    = var.resource_group
+  name                    = "${var.resource_group}-insights" # TODO: should be configurable as variable
   resource_group_name     = data.azurerm_resource_group.namespace.name
 }
 
