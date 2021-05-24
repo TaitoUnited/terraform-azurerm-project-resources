@@ -101,7 +101,7 @@ resource "azurerm_eventgrid_event_subscription" "bucket_queue" {
   for_each              = {for item in local.bucketQueuesByName: item.name => item}
 
   name                  = each.value.name
-  scope                 = data.azurerm_resource_group.namespace.id
+  scope                 = azurerm_storage_account.account[each.value.bucket.name].id
   included_event_types  = each.value.events
 
   storage_queue_endpoint {
