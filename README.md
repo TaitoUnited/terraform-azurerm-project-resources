@@ -87,6 +87,11 @@ services:
       - allowedOrigins:
         - https://myproject.mydomain.com
         - https://www.myproject.mydomain.com
+    queues:
+      - name: ${st_bucket_name}
+        events:
+          - Microsoft.Storage.BlobCreated
+          - Microsoft.Storage.BlobDeleted
     # Object lifecycle (TODO: implement)
     versioning: true
     versioningRetainDays: 60

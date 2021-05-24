@@ -97,6 +97,22 @@ locals {
     if var.create_storage_buckets && service.type == "bucket"
   }
 
+  bucketQueues = flatten([
+    for bucket in local.bucketsById: [
+      for queue in coalesce(bucket.queues, []):
+      {
+        name = queue.name
+        events = queue.events
+        bucket = bucket
+      }
+    ]
+  ])
+
+  bucketQueuesByName = {
+    for queue in local.bucketQueues:
+    queue.name => queue
+  }
+
   gatewayFunctionsById = {
     for name, service in local.servicesById:
     name => service

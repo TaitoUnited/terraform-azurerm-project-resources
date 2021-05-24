@@ -89,3 +89,22 @@ resource "azurerm_storage_container" "container" {
     prevent_destroy = true
   }
 }
+
+resource "azurerm_storage_queue" "bucket_queue" {
+  for_each              = {for item in local.bucketQueuesByName: item.name => item}
+
+  name                  = each.value.name
+  storage_account_name  = azurerm_storage_account.account[each.value.bucket.name].name
+}
+
+resource "azurerm_eventgrid_event_subscription" "bucket_queue" {
+  for_each              = {for item in local.bucketQueuesByName: item.name => item}
+
+  name                  = each.value.name
+  scope                 = data.azurerm_resource_group.namespace.id
+
+  storage_queue_endpoint {
+    storage_account_id = azurerm_storage_account.account[each.value.bucket.name].id
+    queue_name         = azurerm_storage_queue.bucket_queue[each.value.key].name
+  }
+}
