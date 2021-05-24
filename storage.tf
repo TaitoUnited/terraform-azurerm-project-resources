@@ -102,6 +102,7 @@ resource "azurerm_eventgrid_event_subscription" "bucket_queue" {
 
   name                  = each.value.name
   scope                 = data.azurerm_resource_group.namespace.id
+  included_event_types  = each.value.events
 
   storage_queue_endpoint {
     storage_account_id = azurerm_storage_account.account[each.value.bucket.name].id
