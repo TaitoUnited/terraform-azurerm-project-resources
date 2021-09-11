@@ -80,7 +80,7 @@ services:
 
   bucket:
     type: bucket
-    name: my-project-prod
+    name: my-bucket-prod
     location: northeurope
     storageClass: Hot
     corsRules:
@@ -88,7 +88,7 @@ services:
         - https://myproject.mydomain.com
         - https://www.myproject.mydomain.com
     queues:
-      - name: ${st_bucket_name}
+      - name: my-bucket-prod
         events:
           - Microsoft.Storage.BlobCreated
           - Microsoft.Storage.BlobDeleted
@@ -105,15 +105,13 @@ services:
     backupRetainDays: 60
     backupLocation: eu
     backupLock: true
-    # User rights (TODO: implement)
+    # User rights
     admins:
-      - id: john.doe@mydomain.com
+      - id: user:john.doe@mydomain.com
     objectAdmins:
-      - id: john.doe@mydomain.com
-      - id: my-project-prod-server
-      - id: my-project-prod-worker
+      - id: group:Developers
     objectViewers:
-      - id: john.doe@mydomain.com
+      - id: user:jane.doe@mydomain.com
 ```
 
 With `create_*` variables you can choose which resources are created/updated in which phase. For example, you can choose to update some of the resources manually when the environment is created or updated:
@@ -138,11 +136,11 @@ And choose to update gateway, containers, and functions on every deployment in y
 
 Similar YAML format is used also by the following modules:
 
-* [AWS project resources](https://registry.terraform.io/modules/TaitoUnited/project-resources/aws)
-* [Azure project resources](https://registry.terraform.io/modules/TaitoUnited/project-resources/azurerm)
-* [Google Cloud project resources](https://registry.terraform.io/modules/TaitoUnited/project-resources/google)
-* [Digital Ocean project resources](https://registry.terraform.io/modules/TaitoUnited/project-resources/digitalocean)
-* [Full-stack template (Helm chart for Kubernetes)](https://github.com/TaitoUnited/taito-charts/tree/master/full-stack)
+- [AWS project resources](https://registry.terraform.io/modules/TaitoUnited/project-resources/aws)
+- [Azure project resources](https://registry.terraform.io/modules/TaitoUnited/project-resources/azurerm)
+- [Google Cloud project resources](https://registry.terraform.io/modules/TaitoUnited/project-resources/google)
+- [Digital Ocean project resources](https://registry.terraform.io/modules/TaitoUnited/project-resources/digitalocean)
+- [Full-stack template (Helm chart for Kubernetes)](https://github.com/TaitoUnited/taito-charts/tree/master/full-stack)
 
 NOTE: This module creates resources for only one project environment. That is, such resources should already exist that are shared among multiple projects or project environments (e.g. users, roles, vpc networks, kubernetes, database clusters). You can use the following modules to create the shared infrastructure:
 

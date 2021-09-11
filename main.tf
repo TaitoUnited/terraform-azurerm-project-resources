@@ -97,6 +97,72 @@ locals {
     if var.create_storage_buckets && service.type == "bucket"
   }
 
+  bucketAdminUsers = flatten([
+    for bucket in local.bucketsById: [
+      for user in [for u in coalesce(bucket.admins, []): u if length(regexall("^user:", u.id)) > 0]:
+      {
+        key  = "${bucket.name}-${user.id}"
+        user = { name: replace(user.id, "/^user:/", "") }
+        bucket = bucket
+      }
+    ]
+  ])
+
+  bucketObjectAdminUsers = flatten([
+    for bucket in local.bucketsById: [
+      for user in [for u in coalesce(bucket.objectAdmins, []): u if length(regexall("^user:", u.id)) > 0]:
+      {
+        key  = "${bucket.name}-${user.id}"
+        user = { name: replace(user.id, "/^user:/", "") }
+        bucket = bucket
+      }
+    ]
+  ])
+
+  bucketObjectViewerUsers = flatten([
+    for bucket in local.bucketsById: [
+      for user in [for u in coalesce(bucket.objectViewers, []): u if length(regexall("^user:", u.id)) > 0]:
+      {
+        key  = "${bucket.name}-${user.id}"
+        user = { name: replace(user.id, "/^user:/", "") }
+        bucket = bucket
+      }
+    ]
+  ])
+
+  bucketAdminGroups = flatten([
+    for bucket in local.bucketsById: [
+      for group in [for u in coalesce(bucket.admins, []): u if length(regexall("^group:", u.id)) > 0]:
+      {
+        key  = "${bucket.name}-${group.id}"
+        group = { name: replace(group.id, "/^group:/", "") }
+        bucket = bucket
+      }
+    ]
+  ])
+
+  bucketObjectAdminGroups = flatten([
+    for bucket in local.bucketsById: [
+      for group in [for u in coalesce(bucket.objectAdmins, []): u if length(regexall("^group:", u.id)) > 0]:
+      {
+        key  = "${bucket.name}-${group.id}"
+        group = { name: replace(group.id, "/^group:/", "") }
+        bucket = bucket
+      }
+    ]
+  ])
+
+  bucketObjectViewerGroups = flatten([
+    for bucket in local.bucketsById: [
+      for group in [for u in coalesce(bucket.objectViewers, []): u if length(regexall("^group:", u.id)) > 0]:
+      {
+        key  = "${bucket.name}-${group.id}"
+        group = { name: replace(group.id, "/^group:/", "") }
+        bucket = bucket
+      }
+    ]
+  ])
+
   bucketQueues = flatten([
     for bucket in local.bucketsById: [
       for queue in coalesce(bucket.queues, []):

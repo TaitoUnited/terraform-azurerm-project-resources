@@ -109,3 +109,79 @@ resource "azurerm_eventgrid_event_subscription" "bucket_queue" {
     queue_name         = azurerm_storage_queue.bucket_queue[each.key].name
   }
 }
+
+/* User permissions */
+
+data "azuread_user" "bucket_admin_user" {
+  for_each             = {for item in local.bucketAdminUsers: item.key => item}
+  user_principal_name  = each.value.user.name
+}
+
+resource "azurerm_role_assignment" "bucket_admin_user_assignment" {
+  for_each             = {for item in local.bucketAdminUsers: item.key => item}
+  scope                = azurerm_storage_account.account[each.value.bucket.name].id
+  principal_id         = data.azuread_user.bucket_admin_user[each.key].object_id
+  role_definition_name = "Storage Blob Data Owner"
+}
+
+data "azuread_user" "bucket_object_admin_user" {
+  for_each             = {for item in local.bucketObjectAdminUsers: item.key => item}
+  user_principal_name  = each.value.user.name
+}
+
+resource "azurerm_role_assignment" "bucket_object_admin_user_assignment" {
+  for_each             = {for item in local.bucketObjectAdminUsers: item.key => item}
+  scope                = azurerm_storage_account.account[each.value.bucket.name].id
+  principal_id         = data.azuread_user.bucket_object_admin_user[each.key].object_id
+  role_definition_name = "Storage Blob Data Contributor"
+}
+
+data "azuread_user" "bucket_object_viewer_user" {
+  for_each             = {for item in local.bucketObjectViewerUsers: item.key => item}
+  user_principal_name  = each.value.user.name
+}
+
+resource "azurerm_role_assignment" "bucket_object_viewer_user_assignment" {
+  for_each             = {for item in local.bucketObjectViewerUsers: item.key => item}
+  scope                = azurerm_storage_account.account[each.value.bucket.name].id
+  principal_id         = data.azuread_user.bucket_object_viewer_user[each.key].object_id
+  role_definition_name = "Storage Blob Data Reader"
+}
+
+/* Group permissions */
+
+data "azuread_group" "bucket_admin_group" {
+  for_each             = {for item in local.bucketAdminGroups: item.key => item}
+  display_name         = each.value.group.name
+}
+
+resource "azurerm_role_assignment" "bucket_admin_group_assignment" {
+  for_each             = {for item in local.bucketAdminGroups: item.key => item}
+  scope                = azurerm_storage_account.account[each.value.bucket.name].id
+  principal_id         = data.azuread_group.bucket_admin_group[each.key].object_id
+  role_definition_name = "Storage Blob Data Owner"
+}
+
+data "azuread_group" "bucket_object_admin_group" {
+  for_each             = {for item in local.bucketObjectAdminGroups: item.key => item}
+  display_name         = each.value.group.name
+}
+
+resource "azurerm_role_assignment" "bucket_object_admin_group_assignment" {
+  for_each             = {for item in local.bucketObjectAdminGroups: item.key => item}
+  scope                = azurerm_storage_account.account[each.value.bucket.name].id
+  principal_id         = data.azuread_group.bucket_object_admin_group[each.key].object_id
+  role_definition_name = "Storage Blob Data Contributor"
+}
+
+data "azuread_group" "bucket_object_viewer_group" {
+  for_each             = {for item in local.bucketObjectViewerGroups: item.key => item}
+  display_name         = each.value.group.name
+}
+
+resource "azurerm_role_assignment" "bucket_object_viewer_group_assignment" {
+  for_each             = {for item in local.bucketObjectViewerGroups: item.key => item}
+  scope                = azurerm_storage_account.account[each.value.bucket.name].id
+  principal_id         = data.azuread_group.bucket_object_viewer_group[each.key].object_id
+  role_definition_name = "Storage Blob Data Reader"
+}
