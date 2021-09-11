@@ -21,8 +21,6 @@ resource "azuread_application" "service_account" {
 
   display_name               = each.value.id
   identifier_uris            = ["http://${each.value.id}"]
-  available_to_other_tenants = false
-  oauth2_allow_implicit_flow = true
 }
 
 resource "azuread_service_principal" "service_account" {
@@ -38,8 +36,6 @@ resource "azuread_application" "cicd" {
 
   display_name               = "${var.project}-${var.env}-cicd"
   identifier_uris            = ["http://${var.project}-${var.env}-cicd"]
-  available_to_other_tenants = false
-  oauth2_allow_implicit_flow = true
 }
 
 resource "azuread_service_principal" "cicd" {
