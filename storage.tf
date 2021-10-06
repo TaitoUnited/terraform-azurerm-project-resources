@@ -124,6 +124,13 @@ resource "azurerm_role_assignment" "bucket_admin_user_assignment" {
   role_definition_name = "Storage Blob Data Owner"
 }
 
+resource "azurerm_role_assignment" "bucket_admin_user_reader_assignment" {
+  for_each             = {for item in local.bucketAdminUsers: item.key => item}
+  scope                = azurerm_storage_account.account[each.value.bucket.name].id
+  principal_id         = data.azuread_user.bucket_admin_user[each.key].object_id
+  role_definition_name = "Reader"
+}
+
 data "azuread_user" "bucket_object_admin_user" {
   for_each             = {for item in local.bucketObjectAdminUsers: item.key => item}
   user_principal_name  = each.value.user.name
@@ -136,6 +143,13 @@ resource "azurerm_role_assignment" "bucket_object_admin_user_assignment" {
   role_definition_name = "Storage Blob Data Contributor"
 }
 
+resource "azurerm_role_assignment" "bucket_object_admin_user_reader_assignment" {
+  for_each             = {for item in local.bucketObjectAdminUsers: item.key => item}
+  scope                = azurerm_storage_account.account[each.value.bucket.name].id
+  principal_id         = data.azuread_user.bucket_object_admin_user[each.key].object_id
+  role_definition_name = "Reader"
+}
+
 data "azuread_user" "bucket_object_viewer_user" {
   for_each             = {for item in local.bucketObjectViewerUsers: item.key => item}
   user_principal_name  = each.value.user.name
@@ -146,6 +160,13 @@ resource "azurerm_role_assignment" "bucket_object_viewer_user_assignment" {
   scope                = azurerm_storage_account.account[each.value.bucket.name].id
   principal_id         = data.azuread_user.bucket_object_viewer_user[each.key].object_id
   role_definition_name = "Storage Blob Data Reader"
+}
+
+resource "azurerm_role_assignment" "bucket_object_viewer_user_reader_assignment" {
+  for_each             = {for item in local.bucketObjectViewerUsers: item.key => item}
+  scope                = azurerm_storage_account.account[each.value.bucket.name].id
+  principal_id         = data.azuread_user.bucket_object_viewer_user[each.key].object_id
+  role_definition_name = "Reader"
 }
 
 /* Group permissions */
