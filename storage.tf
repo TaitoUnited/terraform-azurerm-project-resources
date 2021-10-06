@@ -162,6 +162,13 @@ resource "azurerm_role_assignment" "bucket_admin_group_assignment" {
   role_definition_name = "Storage Blob Data Owner"
 }
 
+resource "azurerm_role_assignment" "bucket_admin_group_reader_assignment" {
+  for_each             = {for item in local.bucketAdminGroups: item.key => item}
+  scope                = azurerm_storage_account.account[each.value.bucket.name].id
+  principal_id         = data.azuread_group.bucket_admin_group[each.key].object_id
+  role_definition_name = "Reader"
+}
+
 data "azuread_group" "bucket_object_admin_group" {
   for_each             = {for item in local.bucketObjectAdminGroups: item.key => item}
   display_name         = each.value.group.name
@@ -174,6 +181,13 @@ resource "azurerm_role_assignment" "bucket_object_admin_group_assignment" {
   role_definition_name = "Storage Blob Data Contributor"
 }
 
+resource "azurerm_role_assignment" "bucket_object_admin_group_reader_assignment" {
+  for_each             = {for item in local.bucketObjectAdminGroups: item.key => item}
+  scope                = azurerm_storage_account.account[each.value.bucket.name].id
+  principal_id         = data.azuread_group.bucket_object_admin_group[each.key].object_id
+  role_definition_name = "Reader"
+}
+
 data "azuread_group" "bucket_object_viewer_group" {
   for_each             = {for item in local.bucketObjectViewerGroups: item.key => item}
   display_name         = each.value.group.name
@@ -184,4 +198,11 @@ resource "azurerm_role_assignment" "bucket_object_viewer_group_assignment" {
   scope                = azurerm_storage_account.account[each.value.bucket.name].id
   principal_id         = data.azuread_group.bucket_object_viewer_group[each.key].object_id
   role_definition_name = "Storage Blob Data Reader"
+}
+
+resource "azurerm_role_assignment" "bucket_object_viewer_group_reader_assignment" {
+  for_each             = {for item in local.bucketObjectViewerGroups: item.key => item}
+  scope                = azurerm_storage_account.account[each.value.bucket.name].id
+  principal_id         = data.azuread_group.bucket_object_viewer_group[each.key].object_id
+  role_definition_name = "Reader"
 }
