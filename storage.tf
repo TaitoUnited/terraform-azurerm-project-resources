@@ -46,7 +46,7 @@ resource "azurerm_storage_account" "account" {
   }
 
   dynamic "blob_properties" {
-    for_each = length(coalesce(each.value.corsRules, [])) > 0 || each.value.autoDeletionRetainDays != null ? [ 1 ] : []
+    for_each = length(coalesce(each.value.corsRules, [])) > 0 || each.value.autoDeletionRetainDays != null || each.value.versioningEnabled ? [ 1 ] : []
     content {
       dynamic "cors_rule" {
         for_each = coalesce(each.value.corsRules, [])
@@ -65,13 +65,16 @@ resource "azurerm_storage_account" "account" {
           days = delete_retention_policy.value
         }
       }
+
+      versioning_enabled = each.value.versioningEnabled
+
+      # TODO: implement versioningRetainDays
+      # TODO: implement transitionRetainDays and transitionStorageClass with azurerm_storage_management_policy
+      # TODO: implement backupRetainDays
+
+      # TODO: https://github.com/terraform-providers/terraform-provider-azurerm/issues/8268
     }
   }
-
-  # TODO: https://github.com/terraform-providers/terraform-provider-azurerm/issues/8268
-  # TODO: implement versioningEnabled, versioningRetainDays
-  # TODO: implement transitionRetainDays and transitionStorageClass with azurerm_storage_management_policy
-  # TODO: implement backupRetainDays
 
   lifecycle {
     prevent_destroy = true
