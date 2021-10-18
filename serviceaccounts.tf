@@ -36,6 +36,29 @@ resource "azuread_application" "cicd" {
 
   display_name               = "${var.project}-${var.env}-cicd"
   identifier_uris            = ["http://${var.project}-${var.env}-cicd"]
+
+  // For backwards compatibility
+  // TODO: remove
+  dynamic "api" {
+    for_each = var.cicd_oauth2_scope_id != "" ? [ 1 ] : []
+    content {
+      mapped_claims_enabled          = false
+      requested_access_token_version = 1
+
+      known_client_applications      = []
+
+      oauth2_permission_scope {
+        admin_consent_description  = "Allow the application to access ${var.project}-${var.env}-cicd on behalf of the signed-in user."
+        admin_consent_display_name = "Access ${var.project}-${var.env}-cicd"
+        enabled                    = true
+        id                         = var.cicd_oauth2_scope_id
+        type                       = "User"
+        user_consent_description   = "Allow the application to access ${var.project}-${var.env}-cicd on your behalf."
+        user_consent_display_name  = "Access ${var.project}-${var.env}-cicd"
+        value                      = "user_impersonation"
+      }
+    }
+  }
 }
 
 resource "azuread_service_principal" "cicd" {

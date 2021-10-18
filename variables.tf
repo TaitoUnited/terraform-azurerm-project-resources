@@ -91,6 +91,13 @@ variable "create_cicd_service_account" {
   description = "If true, CI/CD service account is created."
 }
 
+// TODO: remove
+variable "cicd_oauth2_scope_id" {
+  type        = string
+  default     = ""
+  description = "cicd_oauth2_scope_id for backwards compatibility"
+}
+
 variable "create_service_accounts" {
   type        = bool
   default     = false
