@@ -98,7 +98,7 @@ services:
     lockRetainDays: # TODO: implement
     transitionRetainDays: # TODO: implement
     transitionStorageClass: # TODO: implement
-    autoDeletionRetainDays:
+    autoDeletionRetainDays: # TODO: implement
     # Replication (TODO: implement)
     replicationBucket:
     # Backup (TODO: implement)

@@ -45,35 +45,39 @@ resource "azurerm_storage_account" "account" {
     }
   }
 
-  dynamic "blob_properties" {
-    for_each = length(coalesce(each.value.corsRules, [])) > 0 || each.value.autoDeletionRetainDays != null || each.value.versioningEnabled ? [ 1 ] : []
-    content {
-      dynamic "cors_rule" {
-        for_each = coalesce(each.value.corsRules, [])
-        content {
-          allowed_origins = cors_rule.value.allowedOrigins
-          allowed_methods = coalesce(cors_rule.value.allowedMethods, ["GET","HEAD"])
-          allowed_headers = coalesce(cors_rule.value.allowedHeaders, ["*"])
-          exposed_headers = coalesce(cors_rule.value.exposedHeaders, ["*"])
-          max_age_in_seconds = coalesce(cors_rule.value.maxAgeSeconds, 5)
-        }
+  blob_properties {
+    dynamic "cors_rule" {
+      for_each = coalesce(each.value.corsRules, [])
+      content {
+        allowed_origins = cors_rule.value.allowedOrigins
+        allowed_methods = coalesce(cors_rule.value.allowedMethods, ["GET","HEAD"])
+        allowed_headers = coalesce(cors_rule.value.allowedHeaders, ["*"])
+        exposed_headers = coalesce(cors_rule.value.exposedHeaders, ["*"])
+        max_age_in_seconds = coalesce(cors_rule.value.maxAgeSeconds, 5)
       }
-
-      dynamic "delete_retention_policy" {
-        for_each = each.value.autoDeletionRetainDays != null ? [ each.value.autoDeletionRetainDays ] : []
-        content {
-          days = delete_retention_policy.value
-        }
-      }
-
-      versioning_enabled = each.value.versioningEnabled
-
-      # TODO: implement versioningRetainDays
-      # TODO: implement transitionRetainDays and transitionStorageClass with azurerm_storage_management_policy
-      # TODO: implement backupRetainDays
-
-      # TODO: https://github.com/terraform-providers/terraform-provider-azurerm/issues/8268
     }
+
+    dynamic "delete_retention_policy" {
+      for_each = each.value.versioningRetainDays != null ? [ each.value.versioningRetainDays ] : []
+      content {
+        days = delete_retention_policy.value
+      }
+    }
+
+    dynamic "container_delete_retention_policy" {
+      for_each = each.value.versioningRetainDays != null ? [ each.value.versioningRetainDays ] : []
+      content {
+        days = delete_retention_policy.value
+      }
+    }
+
+    versioning_enabled = each.value.versioningEnabled
+
+    # TODO: implement autoDeletionRetainDays
+    # TODO: implement transitionRetainDays and transitionStorageClass with azurerm_storage_management_policy
+    # TODO: implement backupRetainDays
+
+    # TODO: https://github.com/terraform-providers/terraform-provider-azurerm/issues/8268
   }
 
   lifecycle {
