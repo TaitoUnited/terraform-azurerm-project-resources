@@ -67,7 +67,7 @@ resource "azurerm_storage_account" "account" {
     dynamic "container_delete_retention_policy" {
       for_each = each.value.versioningRetainDays != null ? [ each.value.versioningRetainDays ] : []
       content {
-        days = delete_retention_policy.value
+        days = container_delete_retention_policy.value
       }
     }
 
