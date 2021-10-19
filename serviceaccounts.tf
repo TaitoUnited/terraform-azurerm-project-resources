@@ -59,6 +59,20 @@ resource "azuread_application" "cicd" {
       }
     }
   }
+
+  // For backwards compatibility
+  // TODO: remove
+  dynamic "web" {
+    for_each = var.cicd_oauth2_scope_id != "" ? [ 1 ] : []
+    content {
+      redirect_uris = []
+
+      implicit_grant {
+        access_token_issuance_enabled = true
+        id_token_issuance_enabled     = true
+      }
+    }
+  }
 }
 
 resource "azuread_service_principal" "cicd" {
