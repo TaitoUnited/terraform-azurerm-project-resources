@@ -20,7 +20,7 @@ resource "azuread_application" "service_account" {
   for_each                   = {for item in local.serviceAccounts: item.id => item}
 
   display_name               = each.value.id
-  identifier_uris            = ["http://${each.value.id}"]
+  identifier_uris            = var.cicd_oauth2_scope_id != "" ? ["http://${each.value.id}"] : null
 }
 
 resource "azuread_service_principal" "service_account" {
@@ -35,7 +35,7 @@ resource "azuread_application" "cicd" {
   count                      = var.create_cicd_service_account ? 1 : 0
 
   display_name               = "${var.project}-${var.env}-cicd"
-  identifier_uris            = ["http://${var.project}-${var.env}-cicd"]
+  identifier_uris            = var.cicd_oauth2_scope_id != "" ? ["http://${var.project}-${var.env}-cicd"] : null
 
   // For backwards compatibility
   // TODO: remove
