@@ -22,12 +22,12 @@ resource "azurerm_storage_account" "account" {
   location                  = coalesce(each.value.location, data.azurerm_resource_group.namespace.location)
   account_kind              = coalesce(each.value.accountKind, "StorageV2")
   account_tier              = coalesce(each.value.accountTier, "Standard")         # Standard, Premium
-  account_replication_type  = coalesce(each.value.accountReplicationType, "GRS")   # LRS, GRS, RAGRS, ZRS, GZRS, RAGZRS
+  account_replication_type  = coalesce(each.value.accountReplicationType, "RAGRS") # LRS, GRS, RAGRS, ZRS, GZRS, RAGZRS
   access_tier               = coalesce(each.value.storageClass, "Hot")             # Hot, Cool
   enable_https_traffic_only = coalesce(each.value.enableHttpsTrafficOnly, true)
   min_tls_version           = coalesce(each.value.minTlsVersion, "TLS1_2")         # TLS1_0, TLS1_1, TLS1_2
   allow_blob_public_access  = coalesce(each.value.allowBlobPublicAccess, false)
-  is_hns_enabled            = coalesce(each.value.isHnsEnabled, true)
+  is_hns_enabled            = coalesce(each.value.isHnsEnabled, false)
   large_file_share_enabled  = coalesce(each.value.largeFileShareEnabled, false)
 
   tags = {
