@@ -57,14 +57,12 @@ resource "azurerm_storage_account" "account" {
       }
     }
 
-    /* TODO: enable once GA
     dynamic "delete_retention_policy" {
       for_each = each.value.versioningRetainDays != null ? [ each.value.versioningRetainDays ] : []
       content {
         days = delete_retention_policy.value
       }
     }
-    */
 
     dynamic "container_delete_retention_policy" {
       for_each = each.value.versioningRetainDays != null ? [ each.value.versioningRetainDays ] : []
