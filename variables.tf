@@ -218,6 +218,7 @@ variable "resources" {
 
     services = map(object({
       type = string
+      image = optional(string)
       purpose = optional(string)
       machineType = optional(string)
       name = optional(string)

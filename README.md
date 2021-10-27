@@ -63,6 +63,7 @@ services:
 
   worker:
     type: container # TODO: implement
+    image: my-registry/my-worker:1234
     replicas: 2
     memoryRequest: 128
     secrets:
