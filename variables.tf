@@ -277,7 +277,7 @@ variable "resources" {
       accountReplicationType = optional(string)  # LRS, GRS, RAGRS, ZRS, GZRS, RAGZRS
       enableHttpsTrafficOnly = optional(bool)
       minTlsVersion = optional(string)           # TLS1_0, TLS1_1, TLS1_2
-      allowBlobPublicAccess = optional(bool)
+      allowNestedItemsToBePublic = optional(bool)
       isHnsEnabled = optional(bool)
       largeFileShareEnabled = optional(bool)
       networkRules = optional(object({

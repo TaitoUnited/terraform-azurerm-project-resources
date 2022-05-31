@@ -26,7 +26,7 @@ resource "azurerm_storage_account" "account" {
   access_tier               = coalesce(each.value.storageClass, "Hot")             # Hot, Cool
   enable_https_traffic_only = coalesce(each.value.enableHttpsTrafficOnly, true)
   min_tls_version           = coalesce(each.value.minTlsVersion, "TLS1_2")         # TLS1_0, TLS1_1, TLS1_2
-  allow_blob_public_access  = coalesce(each.value.allowBlobPublicAccess, false)
+  allow_nested_items_to_be_public  = coalesce(each.value.allowNestedItemsToBePublic, false)
   is_hns_enabled            = coalesce(each.value.isHnsEnabled, false)
   large_file_share_enabled  = coalesce(each.value.largeFileShareEnabled, false)
 
