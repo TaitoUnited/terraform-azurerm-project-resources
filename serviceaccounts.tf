@@ -20,7 +20,7 @@ resource "azuread_application" "service_account" {
   for_each                   = {for item in local.serviceAccounts: item.id => item}
 
   display_name               = each.value.id
-  owners                     = [] # TODO: Should be configurable
+  owners                     = local.owners
   identifier_uris            = var.cicd_oauth2_scope_id != "" ? ["http://${each.value.id}"] : null
 }
 
@@ -28,6 +28,7 @@ resource "azuread_service_principal" "service_account" {
   for_each       = {for item in local.serviceAccounts: item.id => item}
 
   application_id = azuread_application.service_account[each.value.id].application_id
+  owners         = local.owners
 }
 
 # CI/CD
@@ -36,7 +37,7 @@ resource "azuread_application" "cicd" {
   count                      = var.create_cicd_service_account ? 1 : 0
 
   display_name               = "${var.project}-${var.env}-cicd"
-  owners                     = [] # TODO: Should be configurable
+  owners                     = local.owners
   identifier_uris            = var.cicd_oauth2_scope_id != "" ? ["http://${var.project}-${var.env}-cicd"] : null
 
   // For backwards compatibility
@@ -81,4 +82,5 @@ resource "azuread_service_principal" "cicd" {
   count          = var.create_cicd_service_account ? 1 : 0
 
   application_id = azuread_application.cicd[0].application_id
+  owners         = local.owners
 }

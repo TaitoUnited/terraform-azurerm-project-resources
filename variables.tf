@@ -170,6 +170,12 @@ variable "kubernetes_name" {
   default     = ""
 }
 
+variable "owner_object_ids" {
+  type        = list(string)
+  description = "Owners of this project configuration. Using current user by default."
+  default     = []
+}
+
 # Uptime settings
 
 variable "uptime_channels" {

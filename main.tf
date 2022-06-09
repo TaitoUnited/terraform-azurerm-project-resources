@@ -18,7 +18,15 @@ provider "azurerm" {
   features {}
 }
 
+data "azuread_client_config" "current" {}
+
 locals {
+
+  owners = (
+    length(var.owner_object_ids) > 0
+    ? var.owner_object_ids
+    : [ data.azuread_client_config.current.object_id ]
+  )
 
   serviceAccounts = (
     var.create_service_accounts
