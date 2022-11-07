@@ -17,17 +17,17 @@
 # Service accounts
 
 resource "azuread_application" "service_account" {
-  for_each                   = {for item in local.serviceAccounts: item.id => item}
+  for_each                   = local.serviceAccountsById
 
-  display_name               = each.value.id
+  display_name               = each.value.name
   owners                     = local.owners
-  identifier_uris            = var.cicd_oauth2_scope_id != "" ? ["http://${each.value.id}"] : null
+  identifier_uris            = var.cicd_oauth2_scope_id != "" ? ["http://${each.value.name}"] : null
 }
 
 resource "azuread_service_principal" "service_account" {
-  for_each       = {for item in local.serviceAccounts: item.id => item}
+  for_each       = local.serviceAccountsById
 
-  application_id = azuread_application.service_account[each.value.id].application_id
+  application_id = azuread_application.service_account[each.value.name].application_id
   owners         = local.owners
 }
 

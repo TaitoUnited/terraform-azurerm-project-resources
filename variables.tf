@@ -111,11 +111,11 @@ variable "create_service_account_roles" {
 }
 
 # NOTE: NOT SUPPORTED BY THE AZURE MODULE
-# variable "create_api_keys" {
-#   type        = bool
-#   default     = false
-#   description = "If true, api keys are created. (TODO)"
-# }
+variable "create_api_keys" {
+  type        = bool
+  default     = false
+  description = "If true, api keys are created. (TODO)"
+}
 
 variable "create_uptime_checks" {
   type        = bool
@@ -198,17 +198,25 @@ variable "resources" {
       rule = string
     })))
 
-    serviceAccounts = optional(list(object({
-      id = string
-      roles = optional(list(string))
-    })))
+    auth = optional(object({
+      # NOTE: NOT SUPPORTED BY THE AZURE MODULE
+      serviceAccounts = optional(list(object({
+        provider = optional(string)
+        name = string
+        roles = optional(list(string))
+      })))
 
-    # NOTE: NOT SUPPORTED BY THE AZURE MODULE
-    # apiKeys = optional(list(object({
-    #   name = string
-    #   services = list(string)
-    #   origins = optional(list(string))
-    # })))
+      # NOTE: NOT SUPPORTED BY THE AZURE MODULE
+      apiKeys = optional(list(object({
+        provider = optional(string)
+        name = string
+        origins = optional(list(string))
+        services = list(object({
+          name = string
+          methods = optional(list(string))
+        }))
+      })))
+    }))
 
     ingress = optional(object({
       class = optional(string)

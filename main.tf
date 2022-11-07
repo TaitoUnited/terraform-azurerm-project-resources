@@ -28,11 +28,21 @@ locals {
     : [ data.azuread_client_config.current.object_id ]
   )
 
-  serviceAccounts = (
-    var.create_service_accounts
-    ? coalesce(var.resources.serviceAccounts, [])
-    : []
-  )
+  # API keys
+
+  apiKeysById = {
+    for apiKey in coalesce(try(var.resources.auth.apiKeys, []), []):
+    "${apiKey.name}-${coalesce(apiKey.provider, "azure")}" => apiKey
+    if var.create_api_keys && coalesce(apiKey.provider, "azure") == "azure"
+  }
+
+  # Service accounts
+
+  serviceAccountsById = {
+    for acc in coalesce(try(var.resources.auth.serviceAccounts, []), []):
+    "${acc.name}-${coalesce(acc.provider, "azure")}" => acc
+    if var.create_service_accounts && coalesce(acc.provider, "azure") == "azure"
+  }
 
   ingress = merge({ enabled: false }, var.resources.ingress)
 

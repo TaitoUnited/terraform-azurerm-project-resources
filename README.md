@@ -6,9 +6,10 @@ Provides Azure resources typically required by projects. The resources are defin
 uptimeEnabled: true
 backupEnabled: true
 
-serviceAccounts: # TODO: implement
-  - id: my-project-prod-server
-  - id: my-project-prod-worker
+auth:
+  serviceAccounts: # TODO: implement
+    - name: my-project-prod-server
+    - name: my-project-prod-worker
 
 ingress:
   class: gateway
