@@ -81,6 +81,6 @@ resource "azuread_application" "cicd" {
 resource "azuread_service_principal" "cicd" {
   count          = var.create_cicd_service_account ? 1 : 0
 
-  application_id = azuread_application.cicd[0].application_id
+  client_id      = azuread_application.cicd[0].client_id
   owners         = local.owners
 }
