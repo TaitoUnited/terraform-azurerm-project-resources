@@ -24,7 +24,7 @@ resource "azurerm_storage_account" "account" {
   account_tier              = coalesce(each.value.accountTier, "Standard")         # Standard, Premium
   account_replication_type  = coalesce(each.value.accountReplicationType, "RAGRS") # LRS, GRS, RAGRS, ZRS, GZRS, RAGZRS
   access_tier               = coalesce(each.value.storageClass, "Hot")             # Hot, Cool
-  enable_https_traffic_only = coalesce(each.value.enableHttpsTrafficOnly, true)
+  https_traffic_only_enabled = coalesce(each.value.enableHttpsTrafficOnly, true)
   min_tls_version           = coalesce(each.value.minTlsVersion, "TLS1_2")         # TLS1_0, TLS1_1, TLS1_2
   allow_nested_items_to_be_public  = coalesce(each.value.allowNestedItemsToBePublic, false)
   is_hns_enabled            = coalesce(each.value.isHnsEnabled, false)

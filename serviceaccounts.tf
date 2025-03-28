@@ -27,7 +27,7 @@ resource "azuread_application" "service_account" {
 resource "azuread_service_principal" "service_account" {
   for_each       = local.serviceAccountsById
 
-  application_id = azuread_application.service_account[each.value.name].application_id
+  client_id     = azuread_application.service_account[each.value.name].client_id
   owners         = local.owners
 }
 
